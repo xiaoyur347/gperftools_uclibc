@@ -202,8 +202,42 @@ extern "C" void* mremap(void* old_addr, size_t old_size, size_t new_size,
   return result;
 }
 
+#ifndef __UCLIBC__
 // libc's version:
 extern "C" void* __sbrk(ptrdiff_t increment);
+
+#else
+
+static inline void* __sbrk(intptr_t increment) {
+  void* curbrk = 0;
+
+#if defined(__mips__)
+#if 0 // recompile uclibc to use this way
+  extern void *__curbrk;
+  curbrk = __curbrk;
+#else // this is a hack way
+  extern unsigned int error_message_count;
+  memcpy(&curbrk,(unsigned char*)&error_message_count + 0x000b3f40 - 0x000b3f70, sizeof(void*));
+#endif
+#else
+#error not support platform
+#endif
+
+  if (increment == 0) {
+    return curbrk;
+  }
+
+  char* prevbrk = static_cast<char*>(curbrk);
+  void* newbrk = prevbrk + increment;
+
+  if (brk(newbrk) == -1) {
+    return reinterpret_cast<void*>(static_cast<intptr_t>(-1));
+  }
+
+  return prevbrk;
+}
+
+#endif
 
 extern "C" void* sbrk(ptrdiff_t increment) __THROW {
   MallocHook::InvokePreSbrkHook(increment);
