@@ -47,6 +47,10 @@
 #ifndef BASE_STACKTRACE_CONFIG_H_
 #define BASE_STACKTRACE_CONFIG_H_
 
+#ifdef HAVE_FEATURES_H
+#include <features.h>   // for __UCLIBC__
+#endif
+
 // First, the i386 and x86_64 case.
 #if (defined(__i386__) || defined(__x86_64__)) && __GNUC__ >= 2
 # if !defined(NO_FRAME_POINTER)
