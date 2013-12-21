@@ -65,6 +65,7 @@ inline Atomic32 NoBarrier_CompareAndSwap(volatile Atomic32* ptr,
     Atomic32 prev, tmp;
     __asm__ volatile(
         ".set   push                \n"
+        ".set   mips2               \n"
         ".set   noreorder           \n"
 
     "1:                             \n"
@@ -94,6 +95,7 @@ inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
     Atomic32 temp, old;
     __asm__ volatile(
         ".set   push                \n"
+        ".set   mips2               \n"
         ".set   noreorder           \n"
 
     "1:                             \n"
@@ -120,6 +122,7 @@ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
     Atomic32 temp, temp2;
     __asm__ volatile(
         ".set   push                \n"
+        ".set   mips2               \n"
         ".set   noreorder           \n"
 
     "1:                             \n"
@@ -141,7 +144,12 @@ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
 
 inline void MemoryBarrier()
 {
-    __asm__ volatile("sync" : : : "memory");
+    __asm__ volatile(
+        ".set   push                \n"
+        ".set   mips2               \n"
+        "sync                       \n"
+        ".set   pop                 \n"
+		: : : "memory");
 }
 
 inline Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr,
