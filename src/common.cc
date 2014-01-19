@@ -219,7 +219,6 @@ void SizeMap::Init() {
 // Metadata allocator -- keeps stats about how many bytes allocated.
 static uint64_t metadata_system_bytes_ = 0;
 static const size_t kMetadataAllocChunkSize = 8*1024*1024;
-static const size_t kMetadataBigAllocThreshold = kMetadataAllocChunkSize / 8;
 // usually malloc uses larger alignments, but because metadata cannot
 // have and fancy simd types, aligning on pointer size seems fine
 static const size_t kMetadataAllignment = sizeof(void *);
